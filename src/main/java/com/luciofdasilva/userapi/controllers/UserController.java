@@ -13,7 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.luciofdasilva.userapi.DTO.UserDTO;
+import com.luciofdasilva.shoppingclient.dto.UserDTO;
+import com.luciofdasilva.userapi.converter.DTOConverter;
 import com.luciofdasilva.userapi.services.UserService;
 
 import jakarta.annotation.PostConstruct;
@@ -41,8 +42,11 @@ public class UserController {
     }
 
     @GetMapping("/user/cpf/{cpf}")
-    public UserDTO getUserFilter(@PathVariable String cpf){
-        return userService.findByCpf(cpf);
+    public UserDTO getUserFilter(
+        @RequestParam(name="key", required = true) String key,
+        @PathVariable String cpf)
+        {
+        return userService.findByCpf(cpf, key);
     }
 
     @DeleteMapping("/user/{id}")
@@ -52,7 +56,7 @@ public class UserController {
 
     @GetMapping("/user/search")
     public List<UserDTO> queryByName(
-        @RequestParam(name="nome", required = true) 
+        @RequestParam(name="nome", required = true)
         String nome)
     {
         return userService.queryByName(nome);

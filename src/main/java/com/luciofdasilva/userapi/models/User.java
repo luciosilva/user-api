@@ -2,7 +2,8 @@ package com.luciofdasilva.userapi.models;
 
 import java.util.Date;
 
-import com.luciofdasilva.userapi.DTO.UserDTO;
+import com.luciofdasilva.shoppingclient.dto.UserDTO;
+import com.luciofdasilva.userapi.converter.DTOConverter;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -21,6 +22,7 @@ public class User {
     private String email;
     private String telefone;
     private Date dataCadastro;
+    private String key;
 
     public static User convert(UserDTO userDTO) {
 		User user = new User();
@@ -30,6 +32,7 @@ public class User {
 		user.setEmail(userDTO.getEmail());
 		user.setTelefone(userDTO.getTelefone());
 		user.setDataCadastro(userDTO.getDataCadastro());
+   		user.setKey(userDTO.getKey());
 		return user;
 	}
 
@@ -90,5 +93,12 @@ public class User {
         this.dataCadastro = dataCadastro;
     }
 
+        public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
 
 }

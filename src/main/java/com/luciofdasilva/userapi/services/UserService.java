@@ -1,13 +1,17 @@
 package com.luciofdasilva.userapi.services;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.luciofdasilva.userapi.DTO.UserDTO;
+import com.luciofdasilva.shoppingclient.dto.UserDTO;
+import com.luciofdasilva.shoppingclient.exception.UserNotFoundException;
+import com.luciofdasilva.userapi.converter.DTOConverter;
 import com.luciofdasilva.userapi.models.User;
 import com.luciofdasilva.userapi.repositories.UserRepository;
 
@@ -20,21 +24,23 @@ public class UserService {
         List<User> usuarios = userRepository.findAll();
         return usuarios
             .stream()
-            .map(UserDTO::convert)
+            .map(DTOConverter::convert)
             .collect(Collectors.toList());
     }
 
     public UserDTO findById(long userId) {
         Optional<User> usuario = userRepository.findById(userId);
         if(usuario.isPresent()){
-            return UserDTO.convert(usuario.get());
+            return DTOConverter.convert(usuario.get());
         }
         return null;
     }
 
     public UserDTO save(UserDTO userDTO) {
+        userDTO.setDataCadastro(new Date());
+        userDTO.setKey(UUID.randomUUID().toString());
         User user = userRepository.save(User.convert(userDTO));
-        return UserDTO.convert(user);
+        return DTOConverter.convert(user);
     }
 
     public UserDTO delete(long userId) {
@@ -45,19 +51,19 @@ public class UserService {
         return null;
     }
 
-    public UserDTO findByCpf(String cpf) {
-        User user = userRepository.findByCpf(cpf);
+    public UserDTO findByCpf(String cpf, String key) {
+        User user = userRepository.findByCpfAndKey(cpf, key);
         if(user != null){
-            return UserDTO.convert(user);
+            return DTOConverter.convert(user);
         }
-        return null;
+        throw new UserNotFoundException();
     }
 
     public List<UserDTO> queryByName(String name) {
         List<User> usuarios = userRepository.queryByNomeLike(name);
         return usuarios
             .stream()
-            .map(UserDTO::convert)
+            .map(DTOConverter::convert)
             .collect(Collectors.toList());
     }
 }
